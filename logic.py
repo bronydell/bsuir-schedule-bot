@@ -46,7 +46,7 @@ def perform_command(command, params, reply, locale):
                     print(kk)
                     reply(locale['building_not_found'])
         if command == "help":
-            reply(locale['help'])
+            reply(locale['help_message'])
     except NoSchedule:
         reply(locale['group_not_found'])
 

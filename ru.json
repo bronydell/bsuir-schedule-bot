@@ -1,7 +1,7 @@
 {
   "building_not_found": "Какой корпус? Либо у меня такой корпус не записан, либо ты его забыл указать",
   "group_not_found": "Группа не найдена или что=то пошло не так",
-  "lesson_template": "{start_time} - {finish_time}. {type} по {subject} {note}. Преподователь: {teacher_name}. Кабинет {cabinet}",
+  "lesson_template": "{start_time} - {finish_time}. {type} по {subject} {note}. Преподователь: {teacher_name}. Кабинет {cabinet}\n",
   "cabinet_template": "Занятие будет проходить в {building}, в кабинете {room}",
   "help_message": "Чтобы узнать расписание на сегодня напиши \"Расписание\", либо \"Расписание *номер группы без звездочек*\"\nПотерялся? Напиши \"Где корпус *номер корпуса*\"\n\nСчитаешь бота говном? Я тоже! Сделай его не говном сделаю pull request сюда: https://github.com/bronydell/bsuir-schedule-bot",
   "lesson_types": {
