@@ -1,4 +1,5 @@
 import locale_manager
+from schedule.exceptions import NoSchedule
 from schedule.api import get_schedule
 from schedule.prettify import prettify_schedule
 from schedule.tools import get_today_schedule, get_tomorrow_schedule
@@ -18,24 +19,34 @@ def parse_message(command_list, message):
 
 
 def perform_command(command, params, reply, locale):
-    if command == "get_current_schedule":
-        try:
+    try:
+        if command == "get_current_schedule":
             if len(params) == 0:
                 schedule = get_schedule(881061)
             else:
                 schedule = get_schedule(params[0])
             reply(get_prettified_schedule(locale, schedule, get_today_schedule))
-        except Exception:
-            reply(locale['group_not_found'])
-    if command == "get_tomorrow_schedule":
-        try:
+
+        if command == "get_tomorrow_schedule":
             if len(params) == 0:
                 schedule = get_schedule(881061)
             else:
                 schedule = get_schedule(params[0])
             reply(get_prettified_schedule(locale, schedule, get_tomorrow_schedule))
-        except Exception:
-            reply(locale['group_not_found'])
+
+        if command == "building_info":
+            if len(params) == 0:
+                reply(locale['building_not_found'])
+            else:
+                try:
+                    buildings = locale_manager.read_buildings(locale)
+                    looking_for_building = ''.join(filter(lambda x: x.isdigit(), params[0]))
+                    reply(buildings[looking_for_building])
+                except KeyError as kk:
+                    print(kk)
+                    reply(locale['building_not_found'])
+    except NoSchedule:
+        reply(locale['group_not_found'])
 
 
 def get_prettified_schedule(locale, schedule, selector):

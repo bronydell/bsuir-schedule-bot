@@ -1,6 +1,8 @@
 import requests
 from json import JSONDecodeError
 
+from schedule.exceptions import NoSchedule
+
 BASE_API_PATH = "https://students.bsuir.by/api/v1/"
 
 
@@ -17,5 +19,5 @@ def get_schedule(student_group):
 
         return response.json()
     except JSONDecodeError:
-        raise Exception("No schedule for that group or something went wrong")
+        raise NoSchedule("No schedule for that group or something went wrong")
 
