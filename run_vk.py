@@ -50,9 +50,6 @@ def main():
     except AuthError as error_msg:
         print("Error while authorizing: {}".format(error_msg))
         exit(-1)
-    except json.JSONDecodeError:
-        print("Can't read json file")
-        exit(-1)
 
 
 if __name__ == "__main__":
