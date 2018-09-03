@@ -45,6 +45,8 @@ def perform_command(command, params, reply, locale):
                 except KeyError as kk:
                     print(kk)
                     reply(locale['building_not_found'])
+        if command == "help":
+            reply(locale['help'])
     except NoSchedule:
         reply(locale['group_not_found'])
 
