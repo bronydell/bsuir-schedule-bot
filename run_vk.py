@@ -35,10 +35,7 @@ def get_client(session):
 
 def start_polling(client, vk_poll):
     for event in vk_poll.listen():
-        try:
-            on_vk_event(client, event)
-        except Exception:
-            pass
+        on_vk_event(client, event)
 
 
 def main():
@@ -48,7 +45,7 @@ def main():
         vk_session = get_session(access_token)
         vk_client = get_client(vk_session)
         club_id = read_club_id(settings)
-        vk_long_poll = VkBotLongPoll(vk_session, club_id)
+        vk_long_poll = VkBotLongPoll(vk_session, club_id, wait=900)
         start_polling(vk_client, vk_long_poll)
     except AuthError as error_msg:
         print("Error while authorizing: {}".format(error_msg))

@@ -10,6 +10,10 @@ def read_lesson_template(locale):
     return locale['lesson_template']
 
 
+def read_subgroup_template(locale):
+    return locale['subgroup_template']
+
+
 def read_cabinet_template(locale):
     return locale['cabinet_template']
 
