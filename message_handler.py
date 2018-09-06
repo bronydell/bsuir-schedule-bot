@@ -1,5 +1,5 @@
 from vk_api.bot_longpoll import VkBotEventType
-from logic import on_message
+from core.logic import on_message
 
 
 def reply_message_vk(client, peer_id):
@@ -10,5 +10,5 @@ def reply_message_vk(client, peer_id):
 
 
 def on_vk_event(client, event):
-    if event.type == VkBotEventType.MESSAGE_NEW:
+    if event.type in [VkBotEventType.MESSAGE_EDIT, VkBotEventType.MESSAGE_NEW]:
         on_message(reply_message_vk(client, event.object.peer_id), event.object.text)

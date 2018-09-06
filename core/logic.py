@@ -1,4 +1,4 @@
-import locale_manager
+from core import locale_manager
 from schedule.exceptions import NoSchedule
 from schedule.api import get_schedule
 from schedule.prettify import prettify_schedule
@@ -7,7 +7,7 @@ from schedule.tools import get_today_schedule, get_tomorrow_schedule
 
 def has_triggered_command(command_list, message):
     for phrase in command_list:
-        if message.lower().startswith(phrase.lower()):
+        if message.startswith(phrase.lower()):
             return phrase
 
 
@@ -15,7 +15,8 @@ def parse_message(command_list, message):
     for command in command_list.keys():
         triggered_phrase = has_triggered_command(command_list[command], message)
         if triggered_phrase:
-            return command, message.split(triggered_phrase)[1]
+            return command, message.split(triggered_phrase.lower())[1]
+    return None, None
 
 
 def perform_command(command, params, reply, locale):
@@ -42,9 +43,9 @@ def perform_command(command, params, reply, locale):
                     buildings = locale_manager.read_buildings(locale)
                     looking_for_building = ''.join(filter(lambda x: x.isdigit(), params[0]))
                     reply(buildings[looking_for_building])
-                except KeyError as kk:
-                    print(kk)
+                except KeyError:
                     reply(locale['building_not_found'])
+
         if command == "help":
             reply(locale['help_message'])
     except NoSchedule:
@@ -65,6 +66,9 @@ def get_prettified_schedule(locale, schedule, selector):
 
 def on_message(reply, message_text):
     locale = locale_manager.read_locale()
-    command, params = parse_message(locale['commands'], message_text)
-    if command:
-        perform_command(command, list(filter(None, params.split(' '))), reply, locale)
+    if message_text.startswith(locale_manager.read_prefix(locale)):
+        # We should remove prefix
+        lowered_message = message_text.lower()[1:]
+        command, params = parse_message(locale['commands'], lowered_message)
+        if command:
+            perform_command(command, list(filter(None, params.split(' '))), reply, locale)

@@ -14,6 +14,10 @@ def read_subgroup_template(locale):
     return locale['subgroup_template']
 
 
+def read_prefix(locale):
+    return locale['prefix']
+
+
 def read_cabinet_template(locale):
     return locale['cabinet_template']
 

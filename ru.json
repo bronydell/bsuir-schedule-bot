@@ -1,4 +1,5 @@
 {
+  "prefix": "!",
   "building_not_found": "Какой корпус? Либо у меня такой корпус не записан, либо ты его забыл указать",
   "group_not_found": "Группа не найдена или что-то пошло не так",
   "lesson_template": "{subgroup} {start_time} - {finish_time}. {type} по {subject} {note}. Преподователь: {teacher_name}. Кабинет {cabinet}\n",
