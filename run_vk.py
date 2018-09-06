@@ -35,7 +35,11 @@ def get_client(session):
 
 def start_polling(client, vk_poll):
     for event in vk_poll.listen():
-        on_vk_event(client, event)
+        try:
+            on_vk_event(client, event)
+        except Exception as ex:
+            print(ex)
+            pass
 
 
 def main():
