@@ -3,6 +3,7 @@ from schedule.exceptions import NoSchedule
 from schedule.api import get_schedule
 from schedule.prettify import prettify_schedule
 from schedule.tools import get_today_schedule, get_tomorrow_schedule
+from model.chat import Chat
 
 
 def has_triggered_command(command_list, message):
@@ -19,37 +20,83 @@ def parse_message(command_list, message):
     return None, None
 
 
-def perform_command(command, params, reply, locale):
+def perform_command(command: str, params: str, reply, locale):
     try:
+        chat_id = str(reply.get_chat_id())
         if command == "get_current_schedule":
             if len(params) == 0:
-                schedule = get_schedule(881061)
+                chat = Chat.get_chat_by_chat_id(chat_id)
+                if chat:
+                    schedule = get_schedule(chat.group_id)
+                else:
+                    reply.send_text(locale['chat_is_not_registered'])
+                    return
             else:
                 schedule = get_schedule(params[0])
-            reply(get_prettified_schedule(locale, schedule, get_today_schedule))
+            reply.send_text(get_prettified_schedule(locale, schedule, get_today_schedule))
 
         if command == "get_tomorrow_schedule":
-            if len(params) == 0:
-                schedule = get_schedule(881061)
+            chat = Chat.get_chat_by_chat_id(chat_id)
+            if chat:
+                schedule = get_schedule(chat.group_id)
             else:
-                schedule = get_schedule(params[0])
-            reply(get_prettified_schedule(locale, schedule, get_tomorrow_schedule))
+                reply.send_text(locale['chat_is_not_registered'])
+                return
+            reply.send_text(get_prettified_schedule(locale, schedule, get_tomorrow_schedule))
 
         if command == "building_info":
             if len(params) == 0:
-                reply(locale['building_not_found'])
+                reply.send_text(locale['building_not_found'])
             else:
                 try:
                     buildings = locale_manager.read_buildings(locale)
                     looking_for_building = ''.join(filter(lambda x: x.isdigit(), params[0]))
-                    reply(buildings[looking_for_building])
+                    reply.send_text(buildings[looking_for_building])
                 except KeyError:
-                    reply(locale['building_not_found'])
+                    reply.send_text(locale['building_not_found'])
+
+        if command == "absent":
+            is_done = Chat.add_student(chat_id,
+                                       reply.get_message_author_name(),
+                                       reply.get_message_author(),
+                                       reason=params)
+            if is_done:
+                reply.send_text(locale['done_absent'])
+            else:
+                reply.send_text(locale['cant_absent'])
+
+        if command == "deabsent":
+            is_done = Chat.remove_student(chat_id, reply.get_message_author())
+            if is_done:
+                reply.send_text(locale['done_deabsent'])
+            else:
+                reply.send_text(locale['didnt_deabsent'])
+
+        if command == "absent_list":
+            resp_list, date = Chat.generate_list(chat_id,
+                                                 locale['default_list_content'],
+                                                 locale['row_template'])
+            if resp_list:
+                reply.send_text(locale['list_template'].format(
+                    date=date,
+                    content=resp_list
+                ))
+            else:
+                reply.send_text(locale['cant_make_list'])
+
+        if command == "register_chat":
+            group_id = params.strip()
+
+            if Chat.register_chat(chat_id, group_id):
+                reply.send_text(locale['registered'].format(group_id=group_id))
+            else:
+                reply.send_text(locale['group_has_changed'].format(group_id=group_id))
 
         if command == "help":
-            reply(locale['help_message'])
+            reply.send_text(locale['help_message'])
+
     except NoSchedule:
-        reply(locale['group_not_found'])
+        reply.send_text(locale['group_not_found'])
 
 
 def get_prettified_schedule(locale, schedule, selector):
@@ -71,4 +118,4 @@ def on_message(reply, message_text):
         lowered_message = message_text.lower()[1:]
         command, params = parse_message(locale['commands'], lowered_message)
         if command:
-            perform_command(command, list(filter(None, params.split(' '))), reply, locale)
+            perform_command(command, params, reply, locale)

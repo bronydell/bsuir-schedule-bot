@@ -1,7 +1,7 @@
 from vk_api import VkApi, AuthError
 from vk_api.bot_longpoll import VkBotLongPoll
+from model.database import generate_database
 from message_handler import on_vk_event
-
 import json
 
 
@@ -34,11 +34,12 @@ def get_client(session):
 
 
 def start_polling(client, vk_poll):
+    print('Started polling')
     for event in vk_poll.listen():
         try:
             on_vk_event(client, event)
         except Exception as ex:
-            print(ex)
+            print('Error: ', ex)
             pass
 
 
@@ -49,6 +50,7 @@ def main():
         vk_session = get_session(access_token)
         vk_client = get_client(vk_session)
         club_id = read_club_id(settings)
+        generate_database()
         vk_long_poll = VkBotLongPoll(vk_session, club_id, wait=900)
         start_polling(vk_client, vk_long_poll)
     except AuthError as error_msg:

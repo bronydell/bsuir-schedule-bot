@@ -114,3 +114,5 @@ dmypy.json
 
 # Private stuff
 settings.json
+
+*.sqlite
