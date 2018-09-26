@@ -6,6 +6,7 @@
   "subgroup_template": "Подгруппа {subgroup}.",
   "list_template": "Отсутвующие {date}:\n{content}",
   "row_template": "@id{id}({name}) {reason}",
+  "row_help_template": "!{command} - {explanation}",
   "default_list_content": "Походу все придут на пару 0-0",
   "cabinet_template": "Занятие будет проходить в {building}, в кабинете {room}",
   "registered": "Этот чат привязан к группе {group_id}",
@@ -17,7 +18,7 @@
   "didnt_deabsent": "Ну а тыж не говорил что не придешь",
   "cant_deabsent": "Как можно проебывать занятие, когда бот к чату не привязан",
   "group_has_changed": "Этот чат отвязан от старой группы и привязан к группе {group_id}",
-  "help_message": "Чтобы узнать расписание на сегодня напиши \"!Расписание\", либо \"!расписание *номер группы без звездочек*\"\nРасписание на завтра получать вот так: \"!завтра\"\nПотерялся? Напиши \"!корпус *номер корпуса*\"\n\nСчитаешь бота говном? Я тоже! Сделай его не говном с помощью pull request сюда: https://github.com/bronydell/bsuir-schedule-bot",
+  "help_message": "{help_message}\n\nСчитаешь бота говном? Я тоже! Сделай его не говном с помощью pull request сюда: https://github.com/bronydell/bsuir-schedule-bot",
   "lesson_types": {
     "ЛК": "Лекция",
     "ЛР": "Лабораторная работа",
@@ -34,37 +35,62 @@
     "8": "Козлова ул., 28"
   },
   "commands": {
-    "get_tomorrow_schedule": [
-      "завтра"
-    ],
-    "get_current_schedule": [
-      "расписание",
-      "сегодня"
-    ],
-    "register_chat": [
-      "зарегистрировать",
-      "привязать"
-    ],
-    "help": [
-      "помощь"
-    ],
-    "absent": [
-      "проебать",
-      "проебу",
-      "прогулять",
-      "прогуляю",
-      "пропущу",
-      "пропустить"
-    ],
-    "deabsent": [
-      "передумал"
-    ],
-    "absent_list": [
-      "прогульщики",
-      "список"
-    ],
-    "building_info": [
-      "корпус"
-    ]
+    "get_tomorrow_schedule": {
+      "explanation": "Расписание на завтра",
+      "commands": [
+        "завтра"
+      ]
+    },
+    "get_current_schedule": {
+      "explanation": "Расписание на сегодня",
+      "commands": [
+        "расписание",
+        "сегодня"
+      ]
+    },
+    "register_chat": {
+      "explanation": "Привязать чат к группе",
+      "commands": [
+        "зарегистрировать",
+        "привязать"
+      ]
+    },
+    "help": {
+      "explanation": "Помощь",
+      "commands": [
+        "помощь"
+      ]
+    },
+    "absent": {
+      "explanation": "Пропустить пары записавшись в список",
+      "commands": [
+        "проебать",
+        "проебу",
+        "прогулять",
+        "прогуляю",
+        "пропущу",
+        "пропустить"
+      ]
+    },
+    "deabsent": {
+      "explanation": "Всё таки посетить пару и выйти из списка",
+      "commands": [
+        "передумал"
+      ]
+    },
+    "absent_list": {
+      "explanation": "Распечатать список прогульщиков",
+      "commands": [
+        "прогульщики",
+        "список"
+      ]
+    },
+    "building_info": {
+      "explanation": "Узнать инфу про корпус",
+      "commands": [
+        "корпус"
+      ]
+    }
+
   }
 }

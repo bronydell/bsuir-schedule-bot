@@ -6,6 +6,13 @@ from schedule.tools import get_today_schedule, get_tomorrow_schedule
 from model.chat import Chat
 
 
+def help_command(command, explanation, template):
+    return template.format(
+        command=command,
+        explanation=explanation,
+    )
+
+
 def has_triggered_command(command_list, message):
     for phrase in command_list:
         if message.startswith(phrase.lower()):
@@ -14,7 +21,7 @@ def has_triggered_command(command_list, message):
 
 def parse_message(command_list, message):
     for command in command_list.keys():
-        triggered_phrase = has_triggered_command(command_list[command], message)
+        triggered_phrase = has_triggered_command(command_list[command]["commands"], message)
         if triggered_phrase:
             return command, message.split(triggered_phrase.lower())[1]
     return None, None
@@ -93,7 +100,14 @@ def perform_command(command: str, params: str, reply, locale):
                 reply.send_text(locale['group_has_changed'].format(group_id=group_id))
 
         if command == "help":
-            reply.send_text(locale['help_message'])
+            content = '\n'.join(map(lambda command:
+                                    help_command(locale["commands"][command]["commands"][0],
+                                                 locale["commands"][command]["explanation"],
+                                                 locale["row_help_template"]),
+                                    locale["commands"].keys()))
+            reply.send_text(locale['help_message'].format(
+                help_message=content
+            ))
 
     except NoSchedule:
         reply.send_text(locale['group_not_found'])
