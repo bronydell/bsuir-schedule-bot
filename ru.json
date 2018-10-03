@@ -5,7 +5,7 @@
   "lesson_template": "{subgroup} {start_time} - {finish_time}. {type} по {subject} {note}. Преподователь: {teacher_name}. Кабинет {cabinet}\n",
   "subgroup_template": "Подгруппа {subgroup}.",
   "list_template": "Отсутвующие {date}:\n{content}",
-  "row_template": "@id{id}({name}) {reason}",
+  "row_template": "{name}(https://vk.com/id{id}) {reason}",
   "row_help_template": "!{command} - {explanation}",
   "default_list_content": "Походу все придут на пару 0-0",
   "cabinet_template": "Занятие будет проходить в {building}, в кабинете {room}",
