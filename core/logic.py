@@ -117,12 +117,14 @@ def get_prettified_schedule(locale, schedule, selector):
     lesson_template = locale_manager.read_lesson_template(locale)
     subgroup_template = locale_manager.read_subgroup_template(locale)
     lesson_types = locale_manager.read_lesson_types(locale)
+    nothing = locale_manager.read_nothing(locale)
     schedule = selector(schedule)
 
     return prettify_schedule(schedule,
                              lesson_template,
                              lesson_types,
-                             subgroup_template)
+                             subgroup_template,
+                             nothing)
 
 
 def on_message(reply, message_text):

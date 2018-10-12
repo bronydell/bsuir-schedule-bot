@@ -24,7 +24,11 @@ def get_subgroup(subgroup_template, subgroup):
         return subgroup_template.format(subgroup=subgroup)
 
 
-def prettify_lesson(lesson, template, lesson_types, subgroup_template):
+def prettify_lesson(lesson, template, lesson_types, subgroup_template, nothing):
+    teachers = nothing if len(lesson['employee']) == 0 else ', '.join(
+        map(lambda employee: teacher_name(employee), lesson['employee']))
+    cabinets = nothing if len(lesson['auditory']) == 0 else ', '.join(
+        map(lambda cabinet: prettify_cabinet(cabinet), lesson['auditory']))
     return template.format(
         subgroup=get_subgroup(subgroup_template, lesson['numSubgroup']),
         start_time=lesson['startLessonTime'],
@@ -32,14 +36,14 @@ def prettify_lesson(lesson, template, lesson_types, subgroup_template):
         type=get_lesson_type(lesson['lessonType'], lesson_types),
         subject=lesson['subject'],
         note=lesson['note'],
-        teacher_name=teacher_name(lesson['employee'][0]),
-        cabinet=prettify_cabinet(lesson['auditory'][0])
+        teacher_name=teachers,
+        cabinet=cabinets
     )
 
 
-def prettify_schedule(schedule, template, lesson_types, subgroup_template):
+def prettify_schedule(schedule, template, lesson_types, subgroup_template, nothing):
     prettified_lessons = map(lambda lesson:
-                             prettify_lesson(lesson, template, lesson_types, subgroup_template),
+                             prettify_lesson(lesson, template, lesson_types, subgroup_template, nothing),
                              schedule)
     pretty_text = '\n'.join(prettified_lessons)
     return pretty_text
