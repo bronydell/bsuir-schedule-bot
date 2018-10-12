@@ -26,5 +26,9 @@ def read_lesson_types(locale):
     return locale['lesson_types']
 
 
+def read_nothing(locale):
+    return locale['nope']
+
+
 def read_buildings(locale):
     return locale['buildings']

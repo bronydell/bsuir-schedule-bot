@@ -16,7 +16,6 @@ def get_schedule(student_group):
         response = requests.get(path, params={
             "studentGroup": student_group,
         })
-
         return response.json()
     except JSONDecodeError:
         raise NoSchedule("No schedule for that group or something went wrong")

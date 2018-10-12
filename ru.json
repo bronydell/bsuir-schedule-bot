@@ -7,6 +7,7 @@
   "list_template": "Отсутвующие {date}:\n{content}",
   "row_template": "* {name} (https://vk.com/id{id}) {reason}",
   "row_help_template": "!{command} - {explanation}",
+  "nope": "нету?",
   "default_list_content": "Походу все придут на пару 0-0",
   "cabinet_template": "Занятие будет проходить в {building}, в кабинете {room}",
   "registered": "Этот чат привязан к группе {group_id}",
