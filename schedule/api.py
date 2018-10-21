@@ -3,7 +3,7 @@ from json import JSONDecodeError
 
 from schedule.exceptions import NoSchedule
 
-BASE_API_PATH = "https://students.bsuir.by/api/v1/"
+BASE_API_PATH = "https://journal.bsuir.by/api/v1/portal/"
 
 
 def get_api_path(method):
@@ -12,7 +12,7 @@ def get_api_path(method):
 
 def get_schedule(student_group):
     try:
-        path = get_api_path('studentGroup/schedule')
+        path = get_api_path('schedule')
         response = requests.get(path, params={
             "studentGroup": student_group,
         })
