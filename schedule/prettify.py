@@ -35,7 +35,7 @@ def prettify_lesson(lesson, template, lesson_types, subgroup_template, nothing):
         finish_time=lesson['endLessonTime'],
         type=get_lesson_type(lesson['lessonType'], lesson_types),
         subject=lesson['subject'],
-        note=lesson['note'],
+        note=lesson.get('note', ''),
         teacher_name=teachers,
         cabinet=cabinets
     )
