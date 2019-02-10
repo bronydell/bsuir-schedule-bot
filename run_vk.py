@@ -51,9 +51,13 @@ def main():
         vk_client = get_client(vk_session)
         club_id = read_club_id(settings)
         generate_database()
-        vk_long_poll = VkBotLongPoll(vk_session, club_id, wait=900)
+        while 1:
+            try:
+                vk_long_poll = VkBotLongPoll(vk_session, club_id, wait=900)
 
-        start_polling(vk_client, vk_long_poll)
+                start_polling(vk_client, vk_long_poll)
+            except ConnectionError:
+                pass
     except AuthError as error_msg:
         print("Error while authorizing: {}".format(error_msg))
         exit(-1)
