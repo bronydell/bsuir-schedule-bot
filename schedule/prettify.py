@@ -29,13 +29,14 @@ def prettify_lesson(lesson, template, lesson_types, subgroup_template, nothing):
         map(lambda employee: teacher_name(employee), lesson['employee']))
     cabinets = nothing if len(lesson['auditory']) == 0 else ', '.join(
         map(lambda cabinet: prettify_cabinet(cabinet), lesson['auditory']))
+    api_note = '' if not lesson.get('note', None) else lesson['note']
     return template.format(
         subgroup=get_subgroup(subgroup_template, lesson['numSubgroup']),
         start_time=lesson['startLessonTime'],
         finish_time=lesson['endLessonTime'],
         type=get_lesson_type(lesson['lessonType'], lesson_types),
         subject=lesson['subject'],
-        note=lesson.get('note', ''),
+        note=api_note,
         teacher_name=teachers,
         cabinet=cabinets
     )
