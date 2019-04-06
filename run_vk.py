@@ -2,6 +2,7 @@ from vk_api import VkApi, AuthError
 from vk_api.bot_longpoll import VkBotLongPoll
 from model.database import generate_database
 from message_handler import on_vk_event
+from requests.exceptions import ConnectionError
 import json
 
 
