@@ -55,7 +55,7 @@ def main():
         club_id = read_club_id(settings)
         generate_database()
         start_time = time.time()
-        save_global_pref('startTime', start_time)
+        save_global_pref('start_time', start_time)
         while 1:
             try:
                 vk_long_poll = VkBotLongPoll(vk_session, club_id, wait=900)
