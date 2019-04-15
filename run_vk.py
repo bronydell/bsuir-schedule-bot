@@ -3,7 +3,9 @@ from vk_api.bot_longpoll import VkBotLongPoll
 from model.database import generate_database
 from message_handler import on_vk_event
 from requests.exceptions import ConnectionError
+from saver import save_global_pref
 import json
+import time
 
 
 def read_json_file(filename):
@@ -52,6 +54,8 @@ def main():
         vk_client = get_client(vk_session)
         club_id = read_club_id(settings)
         generate_database()
+        start_time = time.time()
+        save_global_pref('startTime', start_time)
         while 1:
             try:
                 vk_long_poll = VkBotLongPoll(vk_session, club_id, wait=900)
