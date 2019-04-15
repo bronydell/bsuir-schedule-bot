@@ -68,8 +68,8 @@ def perform_command(command: str, params: str, reply, locale):
             start_time = open_global_pref('start_time', None)
             diff_time = time() - start_time
             hours = int(diff_time / 3600)
-            minutes = int((start_time - hours * 3600) / 60)
-            seconds = int((start_time - hours * 3600 - minutes * 60))
+            minutes = int((diff_time - hours * 3600) / 60)
+            seconds = int((diff_time - hours * 3600 - minutes * 60))
             reply.send_text(locale['uptime_template'].format(hours=hours, minutes=minutes, seconds=seconds))
 
         if command == "absent":
