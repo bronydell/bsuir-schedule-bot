@@ -1,7 +1,7 @@
 from tools import read_json_file
 import time
 from saver import save_global_pref
-from model.database import generate_database
+from model.database_manager import generate_database
 
 from runner import VkRunner, TgRunner
 

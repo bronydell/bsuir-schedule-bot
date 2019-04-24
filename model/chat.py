@@ -1,12 +1,12 @@
-from pony import orm
-from model.database import db
-from model.group import Group
+from peewee import *
+from .group import Group
+from . import BaseModel, db_session
 
 
-class Chat(db.Entity):
-    chat_id = orm.Required(str)
-    chat_type = orm.Required(str)
-    group = orm.Required(Group)
+class Chat(BaseModel):
+    chat_id = CharField(primary_key=True, unique=True)
+    chat_type = CharField()
+    group = ForeignKeyField(Group, backref='group')
 
     def get_group(self):
         """
@@ -17,7 +17,7 @@ class Chat(db.Entity):
         return self.group
 
     @staticmethod
-    @orm.db_session
+    @db_session
     def register_chat(chat_id, chat_type, group_id):
         """
         Binds chat with group
@@ -28,18 +28,18 @@ class Chat(db.Entity):
         """
         chat = Chat.get_chat(chat_id, chat_type)
         if chat is None:
-            Chat(
-                chat_id=chat_id,
-                chat_type=chat_type,
-                group=Group.get_or_create_group(group_id)
-            )
-            return True
+            group = Group.get_or_create_group(group_id)
+            return Chat.create(chat_id=chat_id,
+                               chat_type=chat_type,
+                               group=group
+                               )
 
         chat.group = Group.get_or_create_group(group_id)
+        chat.save()
         return False
 
     @staticmethod
-    @orm.db_session
+    @db_session
     def get_chat(chat_id, chat_type):
         """
         Returns Chat for chat ID
@@ -48,9 +48,11 @@ class Chat(db.Entity):
         :return: Chat for that Chat ID and type or None
         :rtype: Chat
         """
-        return Chat.get(chat_id=chat_id, chat_type=chat_type)
+        try:
+            return Chat.get(chat_id=chat_id, chat_type=chat_type)
+        except DoesNotExist:
+            return None
 
-    @orm.db_session
     def generate_absent_list(self, nothing_in_list_template, row_template):
         """
         Fills absent people to template
@@ -70,11 +72,14 @@ class Chat(db.Entity):
             return student_list, self.group.absent['date']
         return nothing_in_list_template, self.group.absent['date']
 
-    @orm.db_session
+    @db_session
     def remove_student(self, student_id):
         self.group.remove_student(student_id)
+        self.save()
+        return True
 
-    @orm.db_session
+    @db_session
     def add_student(self, student_name, student_id, reason=''):
         self.group.add_student(student_name, student_id, reason)
-
+        self.save()
+        return True

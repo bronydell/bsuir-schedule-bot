@@ -1,15 +1,14 @@
-from pony import orm
+from peewee import *
 from datetime import date
-from model.database import db
+from model.database import BaseModel
+from model.tools import JSONField
 
 
-class Group(db.Entity):
-    group_id = orm.PrimaryKey(str)
-    chats = orm.Set("Chat")
-    absent = orm.Required(orm.Json)
+class Group(BaseModel):
+    group_id = CharField()
+    absent = JSONField()
 
     @staticmethod
-    @orm.db_session
     def get_or_create_group(group_id):
         """
         Creates or returns already existed group
@@ -17,13 +16,13 @@ class Group(db.Entity):
         :return: Returns group that was exited or just created
         :rtype: Group
         """
-        if Group.exists(group_id=group_id):
-            return Group[group_id]
-        else:
-            return Group(group_id=group_id,
-                         absent={
-                             "absent": []
-                         })
+        try:
+            return Group.get(group_id=group_id)
+        except DoesNotExist:
+            return Group.create(group_id=group_id,
+                                absent={
+                                    "absent": []
+                                })
 
     def remove_student(self, student_id):
         """
@@ -36,6 +35,7 @@ class Group(db.Entity):
             lambda student: student['student_id'] != student_id,
             self.get_absent_list()
         ))
+        self.save()
         return True
 
     def add_student(self, student_name, student_id, reason=''):
@@ -61,13 +61,14 @@ class Group(db.Entity):
             }
         )
         self.absent['absent'] = absent_student_list
+        self.save()
 
-    @orm.db_session
     def clean_absent_list(self):
         today = str(date.today())
         if today != self.absent.get('date', ''):
             self.absent['absent'] = []
             self.absent['date'] = today
+            self.save()
 
     def get_absent_list(self):
         """
