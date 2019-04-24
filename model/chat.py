@@ -1,11 +1,13 @@
 from peewee import *
 from .group import Group
+from model.tools import JSONField
 from . import BaseModel, db_session
 
 
 class Chat(BaseModel):
     chat_id = CharField(primary_key=True, unique=True)
     chat_type = CharField()
+    other_settings = JSONField()
     group = ForeignKeyField(Group, backref='group')
 
     def get_group(self):
