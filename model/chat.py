@@ -33,7 +33,8 @@ class Chat(BaseModel):
             group = Group.get_or_create_group(group_id)
             return Chat.create(chat_id=chat_id,
                                chat_type=chat_type,
-                               group=group
+                               group=group,
+                               other_settings={}
                                )
 
         chat.group = Group.get_or_create_group(group_id)
