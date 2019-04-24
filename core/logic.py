@@ -6,6 +6,7 @@ from schedule.api import get_schedule
 from schedule.prettify import prettify_schedule
 from schedule.tools import get_today_schedule, get_tomorrow_schedule
 from model.chat import Chat
+from replyer import BaseReply
 
 
 def help_command(command, explanation, template):
@@ -29,14 +30,13 @@ def parse_message(command_list, message):
     return None, None
 
 
-def perform_command(command: str, params: str, reply, locale):
+def perform_command(command: str, params: str, reply: BaseReply, locale):
     try:
-        chat_id = str(reply.get_chat_id())
+        chat = Chat.get_chat(str(reply.get_chat_id()), str(reply.get_chat_type()))
         if command == "get_current_schedule":
             if len(params) == 0:
-                chat = Chat.get_chat_by_chat_id(chat_id)
                 if chat:
-                    schedule = get_schedule(chat.group_id)
+                    schedule = get_schedule(chat.get_group().group_id)
                 else:
                     reply.send_text(locale['chat_is_not_registered'])
                     return
@@ -45,9 +45,8 @@ def perform_command(command: str, params: str, reply, locale):
             reply.send_text(get_prettified_schedule(locale, schedule, get_today_schedule))
 
         if command == "get_tomorrow_schedule":
-            chat = Chat.get_chat_by_chat_id(chat_id)
             if chat:
-                schedule = get_schedule(chat.group_id)
+                schedule = get_schedule(chat.get_group().group_id)
             else:
                 reply.send_text(locale['chat_is_not_registered'])
                 return
@@ -58,6 +57,7 @@ def perform_command(command: str, params: str, reply, locale):
                 reply.send_text(locale['building_not_found'])
             else:
                 try:
+                    # TODO: Fix bug with commands here
                     buildings = locale_manager.read_buildings(locale)
                     looking_for_building = ''.join(filter(lambda x: x.isdigit(), params[0]))
                     reply.send_text(buildings[looking_for_building])
@@ -73,26 +73,24 @@ def perform_command(command: str, params: str, reply, locale):
             reply.send_text(locale['uptime_template'].format(hours=hours, minutes=minutes, seconds=seconds))
 
         if command == "absent":
-            is_done = Chat.add_student(chat_id,
-                                       reply.get_message_author_name(),
-                                       reply.get_message_author(),
-                                       reason=params)
+            is_done = chat.add_student(reply.get_message_author_name(),
+                                                   reply.get_message_author(),
+                                                   reason=params)
             if is_done:
                 reply.send_text(locale['done_absent'])
             else:
                 reply.send_text(locale['cant_absent'])
 
         if command == "deabsent":
-            is_done = Chat.remove_student(chat_id, reply.get_message_author())
+            is_done = chat.remove_student(reply.get_message_author())
             if is_done:
                 reply.send_text(locale['done_deabsent'])
             else:
                 reply.send_text(locale['didnt_deabsent'])
 
         if command == "absent_list":
-            resp_list, date = Chat.generate_list(chat_id,
-                                                 locale['default_list_content'],
-                                                 locale['row_template'])
+            resp_list, date = chat.generate_absent_list(locale['default_list_content'],
+                                                        locale['row_template'])
             if resp_list:
                 reply.send_text(locale['list_template'].format(
                     date=date,
@@ -104,7 +102,7 @@ def perform_command(command: str, params: str, reply, locale):
         if command == "register_chat":
             group_id = params.strip()
 
-            if Chat.register_chat(chat_id, group_id):
+            if Chat.register_chat(str(reply.get_chat_id()), reply.get_chat_type(), group_id):
                 reply.send_text(locale['registered'].format(group_id=group_id))
             else:
                 reply.send_text(locale['group_has_changed'].format(group_id=group_id))
@@ -137,7 +135,7 @@ def get_prettified_schedule(locale, schedule, selector):
                              nothing)
 
 
-def on_message(reply, message_text):
+def on_message(reply: BaseReply, message_text):
     locale = locale_manager.read_locale()
     if message_text.startswith(locale_manager.read_prefix(locale)):
         # We should remove prefix
