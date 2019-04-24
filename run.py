@@ -13,8 +13,8 @@ def main():
     start_time = time.time()
     save_global_pref('start_time', start_time)
 
-    # vk_runner = VkRunner(config)
-    # vk_runner.start()
+    vk_runner = VkRunner(config)
+    vk_runner.start()
 
     tg_runner = TgRunner(config)
     tg_runner.start()
