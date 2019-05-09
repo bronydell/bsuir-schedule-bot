@@ -4,6 +4,9 @@ executors:
   python-executor:
     docker:
       - image: circleci/python:3.7.0
+    environment:
+      LC_ALL: "en_US.UTF-8"
+      LANG: "en_US.UTF-8"
 
 jobs:
   test:
