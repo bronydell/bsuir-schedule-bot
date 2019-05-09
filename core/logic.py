@@ -23,10 +23,12 @@ def has_triggered_command(command_list, message):
 
 
 def parse_message(command_list, message):
+    lowercase_message = message.lower()
     for command in command_list.keys():
-        triggered_phrase = has_triggered_command(command_list[command]["commands"], message)
+        triggered_phrase = has_triggered_command(command_list[command]["commands"], lowercase_message)
         if triggered_phrase:
-            return command, message.split(triggered_phrase.lower())[1]
+            params = message[len(triggered_phrase):].strip()
+            return command, params
     return None, None
 
 
@@ -139,7 +141,7 @@ def on_message(reply: BaseReply, message_text):
     locale = locale_manager.read_locale()
     if message_text.startswith(locale_manager.read_prefix(locale)):
         # We should remove prefix
-        lowered_message = message_text.lower()[1:]
-        command, params = parse_message(locale['commands'], lowered_message)
+        message = message_text[1:]
+        command, params = parse_message(locale['commands'], message)
         if command:
             perform_command(command, params, reply, locale)
