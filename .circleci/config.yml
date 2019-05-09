@@ -43,6 +43,7 @@ jobs:
             echo "Deploy?"
 
 workflows:
+  version: 2
   test-and-deploy:
     jobs:
       - install-dependecies
