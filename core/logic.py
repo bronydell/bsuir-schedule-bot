@@ -6,10 +6,7 @@ from schedule.prettify import prettify_schedule
 from schedule.tools import get_today_schedule, get_tomorrow_schedule
 from model.chat import Chat
 from replyer import BaseReply
-from json import load
-
-#constant for now
-loc = 'ru'
+from locale_manager import get_locale
 
 def help_command(command, explanation, template):
     return template.format(
@@ -58,14 +55,13 @@ def perform_command(command: str, params: str, reply: BaseReply, locale):
 
         if command == "building_info":
             if len(params) == 0:
-                reply.send_text(locale['building_not_found'])
+                reply.send_text(locale.message_building_not_found())
             else:
                 try:
                     # TODO: Fix bug with commands here
-                    building = locale['buildings'][params[0]]
-                    reply.send_text(locale['building_template'].format(number=params[0], name=building['name'], google=building['google']))
+                    reply.send_text(locale.localize_building(params[0]))
                 except KeyError:
-                    reply.send_text(locale['building_not_found'])
+                    reply.send_text(locale.message_building_not_found())
 
         if command == "uptime":
             start_time = open_global_pref('start_time', None)
@@ -142,11 +138,10 @@ def get_prettified_schedule(locale, schedule, selector):
 
 
 def on_message(reply: BaseReply, message_text):
-    with open(file=loc+'.json', encoding="UTF-8") as file:
-        locale = load(file)
-    if message_text.startswith(locale['prefix']):
+    locale = get_locale('ru')
+    if message_text.startswith(locale.get_prefix()):
         # We should remove prefix
         message = message_text[1:]
-        command, params = parse_message(locale['commands'], message)
+        command, params = parse_message(locale.get_commands(), message)
         if command:
             perform_command(command, params, reply, locale)
