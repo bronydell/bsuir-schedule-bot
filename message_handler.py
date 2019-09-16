@@ -8,5 +8,5 @@ def on_vk_event(client, event):
         on_message(VKReply(client, event), event.object.text)
 
 
-def on_tg_event(client, event):
-    on_message(TGReply(client, event), event.effective_message.text)
+def on_tg_event(update, context):
+    on_message(TGReply(update, context), update.message.text)

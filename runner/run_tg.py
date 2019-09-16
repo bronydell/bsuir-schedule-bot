@@ -11,7 +11,7 @@ class TgRunner(BaseRunner):
         super().__init__(settings['tg'])
         try:
             self.token = self.settings['token']
-            self.updater = Updater(token=self.token)
+            self.updater = Updater(token=self.token, use_context=True)
             logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                                 level=logging.INFO)
         except InvalidToken:
@@ -22,4 +22,3 @@ class TgRunner(BaseRunner):
         dispatcher = self.updater.dispatcher
         dispatcher.add_handler(MessageHandler(Filters.text, on_tg_event))
         self.updater.start_polling()
-

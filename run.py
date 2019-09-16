@@ -3,7 +3,8 @@ import time
 from saver import save_global_pref
 from model.database_manager import generate_database
 
-from runner import VkRunner, TgRunner
+from runner import VkRunner
+from runner import TgRunner
 
 
 def main():
