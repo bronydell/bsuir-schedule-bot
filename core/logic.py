@@ -1,5 +1,4 @@
 from time import time
-from core import locale_manager
 from saver import open_global_pref
 from schedule.exceptions import NoSchedule
 from schedule.api import get_schedule
@@ -7,7 +6,7 @@ from schedule.prettify import prettify_schedule
 from schedule.tools import get_today_schedule, get_tomorrow_schedule
 from model.chat import Chat
 from replyer import BaseReply
-
+from locale_manager import get_locale
 
 def help_command(command, explanation, template):
     return template.format(
@@ -56,15 +55,13 @@ def perform_command(command: str, params: str, reply: BaseReply, locale):
 
         if command == "building_info":
             if len(params) == 0:
-                reply.send_text(locale['building_not_found'])
+                reply.send_text(locale.message_building_not_found())
             else:
                 try:
                     # TODO: Fix bug with commands here
-                    buildings = locale_manager.read_buildings(locale)
-                    looking_for_building = ''.join(filter(lambda x: x.isdigit(), params[0]))
-                    reply.send_text(buildings[looking_for_building])
+                    reply.send_text(locale.localize_building(params[0]))
                 except KeyError:
-                    reply.send_text(locale['building_not_found'])
+                    reply.send_text(locale.message_building_not_found())
 
         if command == "uptime":
             start_time = open_global_pref('start_time', None)
@@ -119,15 +116,18 @@ def perform_command(command: str, params: str, reply: BaseReply, locale):
                 help_message=content
             ))
 
+        if command == "group":
+            reply.send_text(locale["group_template"].format(group=chat.get_group().group_id))
+
     except NoSchedule:
         reply.send_text(locale['group_not_found'])
 
 
 def get_prettified_schedule(locale, schedule, selector):
-    lesson_template = locale_manager.read_lesson_template(locale)
-    subgroup_template = locale_manager.read_subgroup_template(locale)
-    lesson_types = locale_manager.read_lesson_types(locale)
-    nothing = locale_manager.read_nothing(locale)
+    lesson_template = locale['lesson_template']
+    subgroup_template = locale['subgroup_template']
+    lesson_types = locale['lesson_types']
+    nothing = locale['nope']
     schedule = selector(schedule)
 
     return prettify_schedule(schedule,
@@ -138,10 +138,10 @@ def get_prettified_schedule(locale, schedule, selector):
 
 
 def on_message(reply: BaseReply, message_text):
-    locale = locale_manager.read_locale()
-    if message_text.startswith(locale_manager.read_prefix(locale)):
+    locale = get_locale('ru')
+    if message_text.startswith(locale.get_prefix()):
         # We should remove prefix
         message = message_text[1:]
-        command, params = parse_message(locale['commands'], message)
+        command, params = parse_message(locale.get_commands(), message)
         if command:
             perform_command(command, params, reply, locale)
